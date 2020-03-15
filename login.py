@@ -33,7 +33,7 @@ def Login(username : str, password : str, hash_code : str) -> bool:
     if not res.text:
         return True
     else:
-        print(res.text)
+        # print(res.text)
         return False
     
 def GetConfig(hash_code : str, time_out = 60, retry = 5) -> str:
@@ -50,11 +50,11 @@ def GetConfig(hash_code : str, time_out = 60, retry = 5) -> str:
     '''
     start_time = time.time()
     
-    print('getting config...')
+    print('正在拉取配置信息...')
     while time.time() < start_time + time_out:
         res = requests.get("http://" + SERVER + BASE + CONFIG + hash_code)
         content = res.json()
-        print(content['status'])
+        # print(content['status'])
         if content['status'] == 'ok':
             return content['config']
         time.sleep(retry)
@@ -100,7 +100,7 @@ def Test():
     
     # Try login
     while not Login(username, password, hash_code):
-        print('Wrong user name or password.')
+        # print('Wrong user name or password.')
         username = input('username: ')
         password = input('password: ')
     
@@ -108,10 +108,10 @@ def Test():
     config = GetConfig(hash_code)
     
     if not config:
-        print('Failed to get config file.')
+        # print('Failed to get config file.')
     else:
         WriteConfig(config)
-        print('Write config successfully.')
+        # print('Write config successfully.')
     
 if __name__ == "__main__":
     Test()

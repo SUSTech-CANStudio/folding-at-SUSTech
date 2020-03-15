@@ -56,9 +56,9 @@ def login_verify():
             global login_ok
             login_ok = True
             delete_main_screen()
-            print("Writing config")
+            print("正在写入配置文件")
             WriteConfig(config)
-            print("Config file written successfully")
+            print("配置文件写入成功，开始运行")
 
 # Designing popup for login invalid password
 def login_failure():
@@ -133,7 +133,7 @@ def toggleFolding():
 def unpause():
     subprocess.Popen("FAHClient --send-unpause")
     global paused
-    print("Unpausing!!! - {}".format(paused))
+    # print("Unpausing!!! - {}".format(paused))
     paused = False
     global btn_txt
     btn_txt.set("正在运行，点击暂停")
@@ -141,7 +141,7 @@ def unpause():
 def pause():
     subprocess.Popen("FAHClient --send-pause")
     global paused
-    print("pausing!!! - {}".format(paused))
+    # print("pausing!!! - {}".format(paused))
     paused = True
     global btn_txt
     btn_txt.set("已暂停，点击继续")
@@ -150,5 +150,5 @@ if __name__ == "__main__":
     main_account_screen()
     if login_ok:
         fas_screen()
-        print("finish")
+        print("退出")
         fah_client_ref.terminate()
