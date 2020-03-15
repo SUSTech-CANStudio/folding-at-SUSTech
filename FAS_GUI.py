@@ -1,9 +1,7 @@
 from tkinter import *
 import os
+import subprocess
 from login import *
-
-global login_status
-login_status = False
 
 # window for login 
 def login_clicked():
@@ -26,12 +24,13 @@ def login_clicked():
     Label(login_screen, text="Username * ").pack()
     username_login_entry = Entry(login_screen, textvariable=username_verify)
     username_login_entry.pack()
+    username_login_entry.focus()
     Label(login_screen, text="").pack()
     Label(login_screen, text="Password * ").pack()
     password_login_entry = Entry(login_screen, textvariable=password_verify, show= '*')
     password_login_entry.pack()
     Label(login_screen, text="").pack()
-    Button(login_screen, text="Login", width=10, height=1, command=login_verify).pack()
+    btn = Button(login_screen, text="Login", width=10, height=1, command=login_verify).pack()
 
 # Implementing event on login button 
 def login_verify():
@@ -50,16 +49,7 @@ def login_verify():
         if not config:
             config_failure()
         else:
-            login_sucess()
-
-# Designing popup for login success
-def login_sucess():
-    global login_success_screen
-    login_success_screen = Toplevel(login_screen)
-    login_success_screen.title("Success")
-    login_success_screen.geometry("360x66")
-    Label(login_success_screen, text="Login Success").pack()
-    Button(login_success_screen, text="OK", command=delete_login_success).pack()
+            delete_main_screen()
 
 # Designing popup for login invalid password
 def login_failure():
@@ -83,11 +73,6 @@ def config_failure():
 def delete_main_screen():
     main_screen.destroy()
 
-def delete_login_success():
-    login_success_screen.destroy()
-    # after success, delete main screen as well
-    delete_main_screen()
-
 def delete_login_failure():
     login_failure_screen.destroy()
 
@@ -107,7 +92,42 @@ def main_account_screen():
 
     main_screen.mainloop()
 
+# Designing FAS window
+def fas_screen():
+    global paused
+    paused = False
+    # os.system("FAHClient")
+    subprocess.Popen("FAHClient")
+    unpause()
+    global fas_screen
+    fas_screen = Tk()
+    fas_screen.geometry("300x150")
+    fas_screen.title("Folding@SUSTech")
+    # main_screen.iconbitmap("icon.ico")
+    Label(text="Folding@SUSTech", bg="blue", fg="white", width="300", height="2", font=("Calibri Bold", 13)).pack()
+    Label(text="").pack()
+    Button(text="Toggle Folding", height="2", width="30", command=toggleFolding).pack()
+
+    fas_screen.mainloop()
+
+def toggleFolding():
+    unpause() if paused else pause()
+
+def unpause():
+    # os.system("FAHClient --send-unpause")
+    subprocess.Popen("FAHClient --send-unpause")
+    global paused
+    print("UNpausing!!! - {}".format(paused))
+    paused = False
+
+def pause():
+    # os.system("FAHClient --send-pause")
+    subprocess.Popen("FAHClient --send-pause")
+    global paused
+    print("pausing!!! - {}".format(paused))
+    paused = True
+
 if __name__ == "__main__":
     main_account_screen()
-    print("username={}".format(username))
-    print("password={}".format(password))
+    fas_screen()
+
