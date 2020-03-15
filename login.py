@@ -80,12 +80,12 @@ def WriteConfig(config : str):
     '''
     # replace the public & private keys in the config
     (private_key, public_key) = get_key_pair('./TunSafe/')
-    print(config)
     config = re.sub('PrivateKey[ ]*=[ ]*[^ ]+\n', 'PrivateKey = {}\n'.format(private_key), config)
     config = re.sub('PublicKey[ ]*=[ ]*[^ ]+\n', 'PublicKey = {}\n'.format(public_key), config)
     conf = open("./TunSafe/Config/SUSTech.conf", 'w')
-    print("---------------------------------")
-    print(config)
+    # print('{} |jjboom| {}'.format(private_key, public_key))
+    # print("---------------------------------")
+    # print(config)
     conf.write(config)
     conf.close()
     
