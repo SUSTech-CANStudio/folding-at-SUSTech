@@ -56,6 +56,9 @@ def login_verify():
             global login_ok
             login_ok = True
             delete_main_screen()
+            print("Writing config")
+            WriteConfig(config)
+            print("Config file written successfully")
 
 # Designing popup for login invalid password
 def login_failure():
@@ -100,10 +103,11 @@ def main_account_screen():
 
     main_screen.mainloop()
 
-# Designing FAS window
+
 
 fah_client_ref = None
 
+# Designing FAS window
 def fas_screen():
     global paused
     global fah_client_ref
@@ -148,4 +152,3 @@ if __name__ == "__main__":
         fas_screen()
         print("finish")
         fah_client_ref.terminate()
-        # subprocess.Popen("FAHClient --finish")

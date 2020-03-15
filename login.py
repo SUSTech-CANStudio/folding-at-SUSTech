@@ -4,6 +4,8 @@ import time
 import hashlib
 import requests
 import os
+import re
+import keygenerator
 
 # paths
 SERVER = "175.24.73.201"
@@ -76,6 +78,10 @@ def WriteConfig(config : str):
     
     :param config: configuation get from `GetConfig(hash_code)`
     '''
+    # replace the public & private keys in the config
+    (private_key, public_key) = get_key_pair('./TunSafe/')
+    config = config.sub('/PrivateKey[ ]*=[ ]*[^ ]+\n/', 'PrivateKey = {}\n'.format(private_key), config)
+    config = config.sub('/PublicKey[ ]*=[ ]*[^ ]+\n/', 'PublicKey = {}\n'.format(public_key), config)
     conf = open("./TunSafe/Config/SUSTech.conf", 'w')
     conf.write(config)
     conf.close()
