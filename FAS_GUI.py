@@ -101,10 +101,14 @@ def main_account_screen():
     main_screen.mainloop()
 
 # Designing FAS window
+
+fah_client_ref = None
+
 def fas_screen():
     global paused
+    global fah_client_ref
     paused = False
-    subprocess.Popen("FAHClient")
+    fah_client_ref = subprocess.Popen("FAHClient")
     global fas_screen
     fas_screen = Tk()
     fas_screen.geometry("300x150")
@@ -142,4 +146,6 @@ if __name__ == "__main__":
     main_account_screen()
     if login_ok:
         fas_screen()
-        subprocess.Popen("FAHClient --finish")
+        print("finish")
+        fah_client_ref.terminate()
+        # subprocess.Popen("FAHClient --finish")
