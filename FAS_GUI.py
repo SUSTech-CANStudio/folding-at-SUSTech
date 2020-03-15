@@ -56,7 +56,7 @@ def login_verify():
             global login_ok
             login_ok = True
             delete_main_screen()
-            print("正在写入配置文件")
+            print("正在写入配置文件...")
             WriteConfig(config)
             print("配置文件写入成功，开始运行")
 

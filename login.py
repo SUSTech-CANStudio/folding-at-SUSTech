@@ -89,29 +89,3 @@ def WriteConfig(config : str):
     conf.write(config)
     conf.close()
     
-    
-def Test():
-    
-    # Get user name and password
-    username = input('username: ')
-    password = input('password: ')
-    # Generate hash code
-    hash_code = GetHashCode(username)
-    
-    # Try login
-    while not Login(username, password, hash_code):
-        # print('Wrong user name or password.')
-        username = input('username: ')
-        password = input('password: ')
-    
-    # Get configution
-    config = GetConfig(hash_code)
-    
-    if not config:
-        # print('Failed to get config file.')
-    else:
-        WriteConfig(config)
-        # print('Write config successfully.')
-    
-if __name__ == "__main__":
-    Test()
