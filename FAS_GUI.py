@@ -3,12 +3,16 @@ import os
 import subprocess
 from login import *
 
+global login_ok
+login_ok = False
+
 # window for login 
 def login_clicked():
     global login_screen
     login_screen = Toplevel(main_screen)
     login_screen.title("Login")
     login_screen.geometry("300x250")
+    login_screen.iconbitmap("icon.ico")
     Label(login_screen, text="Please enter details below to login").pack()
     Label(login_screen, text="").pack()
 
@@ -49,6 +53,8 @@ def login_verify():
         if not config:
             config_failure()
         else:
+            global login_ok
+            login_ok = True
             delete_main_screen()
 
 # Designing popup for login invalid password
@@ -57,6 +63,7 @@ def login_failure():
     login_failure_screen = Toplevel(login_screen)
     login_failure_screen.title("Wrong user name or password.")
     login_failure_screen.geometry("300x66")
+    login_failure_screen.iconbitmap("icon.ico")
     Label(login_failure_screen, text="Wrong user name or password.").pack()
     Button(login_failure_screen, text="OK", command=delete_login_failure).pack()
 
@@ -66,6 +73,7 @@ def config_failure():
     config_failure_screen = Toplevel(login_screen)
     config_failure_screen.title("Failed to get config file.")
     config_failure_screen.geometry("300x66")
+    config_failure_screen.iconbitmap("icon.ico")
     Label(config_failure_screen, text="Failed to get config file.").pack()
     Button(config_failure_screen, text="OK", command=delete_config_failure).pack()
 
@@ -85,7 +93,7 @@ def main_account_screen():
     main_screen = Tk()
     main_screen.geometry("300x150")
     main_screen.title("Folding@SUSTech")
-    # main_screen.iconbitmap("icon.ico")
+    main_screen.iconbitmap("icon.ico")
     Label(text="Folding@SUSTech", bg="blue", fg="white", width="300", height="2", font=("Calibri Bold", 13)).pack()
     Label(text="").pack()
     Button(text="Login", height="2", width="30", command=login_clicked).pack()
@@ -96,17 +104,18 @@ def main_account_screen():
 def fas_screen():
     global paused
     paused = False
-    # os.system("FAHClient")
     subprocess.Popen("FAHClient")
-    unpause()
     global fas_screen
     fas_screen = Tk()
     fas_screen.geometry("300x150")
     fas_screen.title("Folding@SUSTech")
-    # main_screen.iconbitmap("icon.ico")
+    fas_screen.iconbitmap("icon.ico")
     Label(text="Folding@SUSTech", bg="blue", fg="white", width="300", height="2", font=("Calibri Bold", 13)).pack()
     Label(text="").pack()
-    Button(text="Toggle Folding", height="2", width="30", command=toggleFolding).pack()
+    global btn_txt
+    btn_txt = StringVar()
+    btn = Button(textvariable=btn_txt, height="2", width="30", command=toggleFolding).pack()
+    unpause()
 
     fas_screen.mainloop()
 
@@ -114,20 +123,23 @@ def toggleFolding():
     unpause() if paused else pause()
 
 def unpause():
-    # os.system("FAHClient --send-unpause")
     subprocess.Popen("FAHClient --send-unpause")
     global paused
-    print("UNpausing!!! - {}".format(paused))
+    print("Unpausing!!! - {}".format(paused))
     paused = False
+    global btn_txt
+    btn_txt.set("Folding Active")
 
 def pause():
-    # os.system("FAHClient --send-pause")
     subprocess.Popen("FAHClient --send-pause")
     global paused
     print("pausing!!! - {}".format(paused))
     paused = True
+    global btn_txt
+    btn_txt.set("Folding Paused")
 
 if __name__ == "__main__":
     main_account_screen()
-    fas_screen()
-
+    if login_ok:
+        fas_screen()
+        subprocess.Popen("FAHClient --finish")
