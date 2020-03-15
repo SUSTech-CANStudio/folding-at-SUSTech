@@ -1,49 +1,108 @@
 #!/usr/bin/python3
-from http.client import *
 import json
-import webbrowser
-import uuid
 import time
+import hashlib
+import requests
+import os
 
-TIMEOUT = 60
 # paths
 SERVER = "175.24.73.201"
 PORT = 80
 BASE = "/folding-at-SUSTech-server/src/index.php/api/"
-CAS = "login/"
+LOGIN = "login"
 CONFIG = "accessConfiguration/"
-# links
-CAS_LINK = "http://" + SERVER + BASE + CAS
-CONFIG_LINK = "http://" + SERVER + BASE + CONFIG
-# connection
-CONN = HTTPConnection(SERVER, PORT, 10)
 
-def OpenCAS(hash_code):
-    webbrowser.open(CAS_LINK + hex(hash_code))
+def Login(username : str, password : str, hash_code : str) -> bool:
+    '''
+    Login the SUSTech CAS.
     
-def GetConfig(hash_code):
-    CONN.request('GET', BASE + CONFIG + hex(hash_code))
-    r = CONN.getresponse()
-    content = json.load(r)
-    if content['status'] == 'ok':
-        return (content['config']['ssh_usr'], content['config']['ssh_pwd'])
+    :param username: CAS user name.
+    
+    :param password: CAS password.
+    
+    :param hash_code: unique hashcode generated from `GetHashCode(username)`
+    
+    :return: succeed or not.
+    '''
+    url = "http://" + SERVER + BASE + LOGIN
+    usr_info = {"username" : username, "password" : password, "key" : hash_code}
+    data = {"usr_info" : json.dumps(usr_info)}
+    res = requests.post(url=url, data=data)
+    if not res.text:
+        return True
     else:
+        print(res.text)
         return False
     
-def GetHashCode():
-    return hash(uuid.uuid4())
+def GetConfig(hash_code : str, time_out = 60, retry = 5) -> str:
+    '''
+    Get configution by hash code.
     
-if __name__ == "__main__":
+    :param hash_code: the same hash code as login.
     
-    hash_code = GetHashCode()
-    OpenCAS(hash_code)
+    :param time_out: time limit (seconds) for this action.
     
+    :param retry: sleep time after failed once (seconds).
+    
+    :return: configution of TunSafe. If failed, return false.
+    '''
     start_time = time.time()
     
-    while time.time() < start_time + TIMEOUT:
-        time.sleep(5)
-        config = GetConfig(hash_code)
-        if config:
-            break
+    print('getting config...')
+    while time.time() < start_time + time_out:
+        res = requests.get("http://" + SERVER + BASE + CONFIG + hash_code)
+        content = res.json()
+        print(content['status'])
+        if content['status'] == 'ok':
+            return content['config']
+        time.sleep(retry)
     
-    print(config)
+    return False
+    
+def GetHashCode(username : str) -> str:
+    '''
+    Generate a new hash code.
+    
+    :param username: CAS user name.
+    
+    :return: hash code.
+    '''
+    plain = '{}-{}'.format(username, time.time)
+    return hashlib.sha256(plain.encode()).hexdigest()
+    
+def WriteConfig(config : str):
+    '''
+    Write configution to file.
+    
+    :param config: configuation get from `GetConfig(hash_code)`
+    '''
+    conf = open("./TunSafe/Config/SUSTech.conf", 'w')
+    conf.write(config)
+    conf.close()
+    
+    
+def Test():
+    
+    # Get user name and password
+    username = input('username: ')
+    password = input('password: ')
+    # Generate hash code
+    hash_code = GetHashCode(username)
+    
+    # Try login
+    while not Login(username, password, hash_code):
+        print('Wrong user name or password.')
+        username = input('username: ')
+        password = input('password: ')
+    
+    # Get configution
+    config = GetConfig(hash_code)
+    
+    if not config:
+        print('Failed to get config file.')
+    else:
+        WriteConfig(config)
+        print('Write config successfully.')
+    
+if __name__ == "__main__":
+    Test()
