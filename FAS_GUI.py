@@ -47,18 +47,17 @@ def login_verify():
         login_failure()
     else:
         config = GetConfig(hash_code)
-
-    if not config:
-        config_failure()
-    else:
-        login_sucess()
+        if not config:
+            config_failure()
+        else:
+            login_sucess()
 
 # Designing popup for login success
 def login_sucess():
     global login_success_screen
     login_success_screen = Toplevel(login_screen)
     login_success_screen.title("Success")
-    login_success_screen.geometry("150x100")
+    login_success_screen.geometry("360x66")
     Label(login_success_screen, text="Login Success").pack()
     Button(login_success_screen, text="OK", command=delete_login_success).pack()
 
@@ -67,7 +66,7 @@ def login_failure():
     global login_failure_screen
     login_failure_screen = Toplevel(login_screen)
     login_failure_screen.title("Wrong user name or password.")
-    login_failure_screen.geometry("150x100")
+    login_failure_screen.geometry("300x66")
     Label(login_failure_screen, text="Wrong user name or password.").pack()
     Button(login_failure_screen, text="OK", command=delete_login_failure).pack()
 
@@ -76,7 +75,7 @@ def config_failure():
     global config_failure_screen
     config_failure_screen = Toplevel(login_screen)
     config_failure_screen.title("Failed to get config file.")
-    config_failure_screen.geometry("150x100")
+    config_failure_screen.geometry("300x66")
     Label(config_failure_screen, text="Failed to get config file.").pack()
     Button(config_failure_screen, text="OK", command=delete_config_failure).pack()
 
