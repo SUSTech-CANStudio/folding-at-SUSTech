@@ -112,7 +112,7 @@ def fas_screen():
     global paused
     global fah_client_ref
     paused = False
-    fah_client_ref = subprocess.Popen("FAHClient")
+    fah_client_ref = subprocess.Popen("FAHClient --config ./config.xml")
     global fas_screen
     fas_screen = Tk()
     fas_screen.geometry("300x150")
