@@ -36,7 +36,7 @@ def Login(username : str, password : str, hash_code : str) -> bool:
         # print(res.text)
         return False
     
-def GetConfig(hash_code : str, time_out = 60, retry = 5) -> str:
+def GetConfig(hash_code : str, logger, time_out = 60, retry = 5) -> str:
     '''
     Get configution by hash code.
     
@@ -51,10 +51,11 @@ def GetConfig(hash_code : str, time_out = 60, retry = 5) -> str:
     start_time = time.time()
     
     print('正在拉取配置信息...')
+    logger.debug("Pulling config info...")
     while time.time() < start_time + time_out:
         res = requests.get("http://" + SERVER + BASE + CONFIG + hash_code)
         content = res.json()
-        # print(content['status'])
+        logger.debug('status: {}'.format(content['status']))
         if content['status'] == 'ok':
             return content['config']
         time.sleep(retry)
@@ -83,9 +84,6 @@ def WriteConfig(config : str):
     config = re.sub('PrivateKey[ ]*=[ ]*[^ ]+\n', 'PrivateKey = {}\n'.format(private_key), config)
     config = re.sub('PublicKey[ ]*=[ ]*[^ ]+\n', 'PublicKey = {}\n'.format(public_key), config)
     conf = open("./TunSafe/Config/SUSTech.conf", 'w')
-    # print('{} |jjboom| {}'.format(private_key, public_key))
-    # print("---------------------------------")
-    # print(config)
     conf.write(config)
     conf.close()
     

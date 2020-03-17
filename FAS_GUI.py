@@ -2,9 +2,23 @@ from tkinter import *
 import os
 import subprocess
 from login import *
+import logging
 
 global login_ok
 login_ok = False
+
+file_handler = logging.FileHandler(filename='FASLog.txt')
+file_handler.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - "%(message)s" in - %(funcName)s - Line:%(lineno)s')
+file_handler.setFormatter(formatter)
+
+b_logger = logging.getLogger('test')
+b_logger.setLevel(logging.DEBUG)
+# ch = logging.StreamHandler()
+# ch.setFormatter(formatter)
+# b_logger.addHandler(ch)
+b_logger.addHandler(file_handler)
 
 # window for login 
 def login_clicked():
@@ -36,29 +50,42 @@ def login_clicked():
     Label(login_screen, text="").pack()
     btn = Button(login_screen, text="登录", width=10, height=1, command=login_verify).pack()
 
+    b_logger.info("Initializing Login Window...")
+
+
 # Implementing event on login button 
 def login_verify():
     global username
     global password
     username = username_verify.get()
     password = password_verify.get()
+
+    b_logger.debug("username: {}".format(username))
+    b_logger.info("Verifying username and password...")
+
     # Generate hash code
     hash_code = GetHashCode(username)
+    b_logger.debug("generated hashcode = {}".format(hash_code))
 
     # Try login
     if not Login(username, password, hash_code):
         login_failure()
+        b_logger.warning("login failure.")
     else:
-        config = GetConfig(hash_code)
+        config = GetConfig(hash_code, b_logger)
         if not config:
             config_failure()
+            b_logger.warning("pulling config failure.")
         else:
             global login_ok
             login_ok = True
+            b_logger.debug("Login successful, exiting window...")
             delete_main_screen()
             print("正在写入配置文件...")
+            b_logger.info("Writing config file")
             WriteConfig(config)
             print("配置文件写入成功，开始运行")
+            b_logger.info("Config file written, starting execution...")
 
 # Designing popup for login invalid password
 def login_failure():
@@ -100,10 +127,8 @@ def main_account_screen():
     Label(text="Folding@SUSTech", bg="blue", fg="white", width="300", height="2", font=("Calibri Bold", 13)).pack()
     Label(text="").pack()
     Button(text="认证身份", height="2", width="30", command=login_clicked).pack()
-
+    b_logger.info("Initializing Main Window...")
     main_screen.mainloop()
-
-
 
 fah_client_ref = None
 
@@ -112,6 +137,7 @@ def fas_screen():
     global paused
     global fah_client_ref
     paused = False
+    b_logger.info("Starting FAHClient with config.xml...")
     fah_client_ref = subprocess.Popen("FAHClient --config ./config.xml")
     global fas_screen
     fas_screen = Tk()
@@ -123,6 +149,7 @@ def fas_screen():
     global btn_txt
     btn_txt = StringVar()
     btn = Button(textvariable=btn_txt, height="2", width="30", command=toggleFolding).pack()
+    b_logger.info("Initializing FAHCLient with a pre-unpause signal...")
     unpause()
 
     fas_screen.mainloop()
@@ -137,6 +164,7 @@ def unpause():
     paused = False
     global btn_txt
     btn_txt.set("正在运行，点击暂停")
+    b_logger.debug("Unpaused")
 
 def pause():
     subprocess.Popen("FAHClient --send-pause")
@@ -145,10 +173,12 @@ def pause():
     paused = True
     global btn_txt
     btn_txt.set("已暂停，点击继续")
+    b_logger.debug("Paused")
 
 if __name__ == "__main__":
     main_account_screen()
     if login_ok:
         fas_screen()
         print("退出")
+        b_logger.info("Finish")
         fah_client_ref.terminate()
