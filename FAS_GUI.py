@@ -62,12 +62,13 @@ def login_clicked():
     password_login_entry.pack()
     Label(login_screen, text="").pack()
     btn = Button(login_screen, text="登录", width=10, height=1, command=login_verify).pack()
-
+    login_screen.bind('<Return>', login_verify)
+ 
     b_logger.info("Initializing Login Window...")
 
 
 # Implementing event on login button 
-def login_verify():
+def login_verify(event=None):
     global username
     global password
     username = username_verify.get()
