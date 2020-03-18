@@ -4,20 +4,32 @@ import subprocess
 from login import *
 import logging
 
+global GUI_log_here
+GUI_log_here = False
+
+class TextHandler(logging.Handler):
+    def __init__(self, txtOutput, level=logging.DEBUG, formatter=None):
+        logging.Handler.__init__(self, level)
+        self.txtOutput = txtOutput
+
+    def emit(self, record):
+        global GUI_log_here
+        if GUI_log_here:
+            insertLog(self.txtOutput, self.format(record))
+
+
 global login_ok
 login_ok = False
 
 file_handler = logging.FileHandler(filename='FASLog.txt')
 file_handler.setLevel(logging.DEBUG)
 
+global formatter
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - "%(message)s" in - %(funcName)s - Line:%(lineno)s')
 file_handler.setFormatter(formatter)
 
 b_logger = logging.getLogger('test')
 b_logger.setLevel(logging.DEBUG)
-# ch = logging.StreamHandler()
-# ch.setFormatter(formatter)
-# b_logger.addHandler(ch)
 b_logger.addHandler(file_handler)
 
 # window for login 
@@ -138,10 +150,11 @@ def fas_screen():
     global fah_client_ref
     paused = False
     b_logger.info("Starting FAHClient with config.xml...")
-    fah_client_ref = subprocess.Popen("FAHClient --config ./config.xml")
+    #fah_client_ref = subprocess.Popen("FAHClient --config ./config.xml")
+    fah_client_ref = launchWithoutConsole("FAHClient --config ./config.xml")
     global fas_screen
     fas_screen = Tk()
-    fas_screen.geometry("300x150")
+    fas_screen.geometry("600x300")
     fas_screen.title("Folding@SUSTech")
     fas_screen.iconbitmap("icon.ico")
     Label(text="Folding@SUSTech", bg="blue", fg="white", width="300", height="2", font=("Calibri Bold", 13)).pack()
@@ -150,15 +163,40 @@ def fas_screen():
     btn_txt = StringVar()
     btn = Button(textvariable=btn_txt, height="2", width="30", command=toggleFolding).pack()
     b_logger.info("Initializing FAHCLient with a pre-unpause signal...")
-    unpause()
+    
+    Label(text="").pack()
 
+    txtFrame = Frame(fas_screen, borderwidth=1, relief="sunken")
+    txtOutput = Text(txtFrame, wrap=NONE, height=10, width=70, borderwidth=0, bg="black", fg="white", state=DISABLED)
+    vscroll = Scrollbar(txtFrame, orient=VERTICAL, command=txtOutput.yview)
+    txtOutput['yscroll'] = vscroll.set
+    vscroll.pack(side="right", fill="y")
+    txtOutput.pack(side="left", fill="both", expand=True)
+    txtFrame.pack()
+
+    global formatter
+    th = TextHandler(txtOutput)
+    th.setFormatter(formatter)
+    b_logger.addHandler(th)
+
+    global GUI_log_here
+    GUI_log_here = True
+    unpause()
     fas_screen.mainloop()
+
+def insertLog(txtOutput, str):
+    txtOutput.config(state=NORMAL)
+    txtOutput.insert(END, str + "\n")
+    txtOutput.config(state=DISABLED)
+    txtOutput.yview_moveto(1)
+    
 
 def toggleFolding():
     unpause() if paused else pause()
 
 def unpause():
-    subprocess.Popen("FAHClient --send-unpause")
+    #subprocess.Popen("FAHClient --send-unpause")
+    launchWithoutConsole("FAHClient --send-unpause")
     global paused
     # print("Unpausing!!! - {}".format(paused))
     paused = False
@@ -167,7 +205,8 @@ def unpause():
     b_logger.debug("Unpaused")
 
 def pause():
-    subprocess.Popen("FAHClient --send-pause")
+    #subprocess.Popen("FAHClient --send-pause")
+    launchWithoutConsole("FAHClient --send-pause")
     global paused
     # print("pausing!!! - {}".format(paused))
     paused = True
@@ -175,10 +214,16 @@ def pause():
     btn_txt.set("已暂停，点击继续")
     b_logger.debug("Paused")
 
+def launchWithoutConsole(command):
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    return subprocess.Popen(command, startupinfo=startupinfo)
+
 if __name__ == "__main__":
     main_account_screen()
     if login_ok:
         fas_screen()
+        GUI_log_here = False
         print("退出")
         b_logger.info("Finish")
         fah_client_ref.terminate()
