@@ -5,7 +5,6 @@ import hashlib
 import requests
 import os
 import re
-from keygenerator import *
 
 # paths
 NB_URL = "https://folding-api.citric-acid.zzwcdn.com/url.json"
