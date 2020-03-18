@@ -1,0 +1,116 @@
+*********************** Log Started 2020-03-15T14:16:05Z ***********************
+14:16:05:************************* Folding@home Client *************************
+14:16:05:        Website: https://foldingathome.org/
+14:16:05:      Copyright: (c) 2009-2018 foldingathome.org
+14:16:05:         Author: Joseph Coffland <joseph@cauldrondevelopment.com>
+14:16:05:           Args: 
+14:16:05:         Config: <none>
+14:16:05:******************************** Build ********************************
+14:16:05:        Version: 7.5.1
+14:16:05:           Date: May 11 2018
+14:16:05:           Time: 13:06:32
+14:16:05:     Repository: Git
+14:16:05:       Revision: 4705bf53c635f88b8fe85af7675557e15d491ff0
+14:16:05:         Branch: master
+14:16:05:       Compiler: Visual C++ 2008
+14:16:05:        Options: /TP /nologo /EHa /wd4297 /wd4103 /Ox /MT
+14:16:05:       Platform: win32 10
+14:16:05:           Bits: 32
+14:16:05:           Mode: Release
+14:16:05:******************************* System ********************************
+14:16:05:            CPU: Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz
+14:16:05:         CPU ID: GenuineIntel Family 6 Model 158 Stepping 9
+14:16:05:           CPUs: 8
+14:16:05:         Memory: 15.89GiB
+14:16:05:    Free Memory: 7.31GiB
+14:16:05:        Threads: WINDOWS_THREADS
+14:16:05:     OS Version: 6.2
+14:16:05:    Has Battery: true
+14:16:05:     On Battery: false
+14:16:05:     UTC Offset: 8
+14:16:05:            PID: 11612
+14:16:05:            CWD: E:\OneDrive -
+14:16:05:                 Platinum\CANStudio\Common\folding-at-SUSTech\TunSafe
+14:16:05:             OS: Windows 10 Enterprise
+14:16:05:        OS Arch: AMD64
+14:16:05:           GPUs: 0
+14:16:05:  CUDA Device 0: Platform:0 Device:0 Bus:1 Slot:0 Compute:6.1 Driver:10.1
+14:16:05:OpenCL Device 0: Platform:0 Device:0 Bus:NA Slot:NA Compute:2.1 Driver:24.20
+14:16:05:  Win32 Service: false
+14:16:05:***********************************************************************
+14:16:05:<config>
+14:16:05:  <!-- Folding Slots -->
+14:16:05:</config>
+14:16:05:Connecting to assign1.foldingathome.org:8080
+14:16:07:Updated GPUs.txt
+14:16:07:Read GPUs.txt
+14:16:07:Trying to access database...
+14:16:07:Successfully acquired database lock
+14:16:07:Enabled folding slot 00: PAUSED cpu:3 (not configured)
+14:16:07:Enabled folding slot 01: PAUSED gpu:0:GP107M [GeForce GTX 1050 Ti Mobile] (not configured)
+14:17:08:Saving configuration to config.xml
+14:17:08:<config>
+14:17:08:  <!-- Folding Slots -->
+14:17:08:  <slot id='0' type='CPU'/>
+14:17:08:  <slot id='1' type='GPU'/>
+14:17:08:</config>
+14:17:08:Set client configured
+14:17:08:WU00:FS00:Connecting to 65.254.110.245:8080
+14:17:09:WU00:FS00:Connecting to 65.254.110.245:8080
+14:17:10:WARNING:WU00:FS00:Failed to get assignment from '65.254.110.245:8080': No WUs available for this configuration
+14:17:10:WU00:FS00:Connecting to 18.218.241.186:80
+14:17:13:WARNING:WU00:FS00:Failed to get assignment from '18.218.241.186:80': No WUs available for this configuration
+14:17:13:ERROR:WU00:FS00:Exception: Could not get an assignment
+14:17:13:WU00:FS00:Connecting to 65.254.110.245:8080
+14:17:14:WARNING:WU00:FS00:Failed to get assignment from '65.254.110.245:8080': No WUs available for this configuration
+14:17:14:WU00:FS00:Connecting to 18.218.241.186:80
+14:17:15:WARNING:WU00:FS00:Failed to get assignment from '18.218.241.186:80': No WUs available for this configuration
+14:17:15:ERROR:WU00:FS00:Exception: Could not get an assignment
+14:18:13:WU00:FS00:Connecting to 65.254.110.245:8080
+14:18:14:WARNING:WU00:FS00:Failed to get assignment from '65.254.110.245:8080': No WUs available for this configuration
+14:18:14:WU00:FS00:Connecting to 18.218.241.186:80
+14:18:16:WARNING:WU00:FS00:Failed to get assignment from '18.218.241.186:80': No WUs available for this configuration
+14:18:16:ERROR:WU00:FS00:Exception: Could not get an assignment
+14:19:50:WU00:FS00:Connecting to 65.254.110.245:8080
+14:19:51:WARNING:WU00:FS00:Failed to get assignment from '65.254.110.245:8080': No WUs available for this configuration
+14:19:51:WU00:FS00:Connecting to 18.218.241.186:80
+14:22:10:8:127.0.0.1:New Web connection
+14:26:22:WU01:FS01:Connecting to 65.254.110.245:8080
+14:26:24:WU01:FS01:Assigned to work server 140.163.4.231
+14:26:24:WU01:FS01:Requesting new work unit for slot 01: READY gpu:0:GP107M [GeForce GTX 1050 Ti Mobile] from 140.163.4.231
+14:26:24:WU01:FS01:Connecting to 140.163.4.231:8080
+14:26:45:WARNING:WU01:FS01:WorkServer connection failed on port 8080 trying 80
+14:26:45:WU01:FS01:Connecting to 140.163.4.231:80
+14:27:06:ERROR:WU01:FS01:Exception: Failed to connect to 140.163.4.231:80: 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+14:27:06:WU01:FS01:Connecting to 65.254.110.245:8080
+14:27:08:WU01:FS01:Assigned to work server 140.163.4.231
+14:27:08:WU01:FS01:Requesting new work unit for slot 01: READY gpu:0:GP107M [GeForce GTX 1050 Ti Mobile] from 140.163.4.231
+14:27:08:WU01:FS01:Connecting to 140.163.4.231:8080
+14:27:18:Saving configuration to config.xml
+14:27:18:<config>
+14:27:18:  <!-- Slot Control -->
+14:27:18:  <power v='FULL'/>
+14:27:18:
+14:27:18:  <!-- Folding Slots -->
+14:27:18:  <slot id='0' type='CPU'/>
+14:27:18:  <slot id='1' type='GPU'/>
+14:27:18:</config>
+14:27:29:WARNING:WU01:FS01:WorkServer connection failed on port 8080 trying 80
+14:27:29:WU01:FS01:Connecting to 140.163.4.231:80
+14:27:50:ERROR:WU01:FS01:Exception: Failed to connect to 140.163.4.231:80: 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+14:28:43:WU01:FS01:Connecting to 65.254.110.245:8080
+14:28:48:WU01:FS01:Assigned to work server 140.163.4.241
+14:28:48:WU01:FS01:Requesting new work unit for slot 01: READY gpu:0:GP107M [GeForce GTX 1050 Ti Mobile] from 140.163.4.241
+14:28:48:WU01:FS01:Connecting to 140.163.4.241:8080
+14:29:09:WARNING:WU01:FS01:WorkServer connection failed on port 8080 trying 80
+14:29:09:WU01:FS01:Connecting to 140.163.4.241:80
+14:29:30:ERROR:WU01:FS01:Exception: Failed to connect to 140.163.4.241:80: 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+14:31:20:WU01:FS01:Connecting to 65.254.110.245:8080
+14:31:21:WU01:FS01:Assigned to work server 140.163.4.241
+14:31:25:WU01:FS01:Requesting new work unit for slot 01: READY gpu:0:GP107M [GeForce GTX 1050 Ti Mobile] from 140.163.4.241
+14:31:25:WU01:FS01:Connecting to 140.163.4.241:8080
+14:31:46:WARNING:WU01:FS01:WorkServer connection failed on port 8080 trying 80
+14:31:46:WU01:FS01:Connecting to 140.163.4.241:80
+14:32:07:ERROR:WU01:FS01:Exception: Failed to connect to 140.163.4.241:80: 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+14:32:12:WARNING:Console control signal 2 on PID 11612
+14:32:12:Exiting, please wait. . .
