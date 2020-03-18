@@ -1,4 +1,8 @@
 <config>
+  <!-- Slot Control -->
+  <idle v='true'/>
+  <power v="full"/>
+
   <!-- User Information -->
   <team v='236305'/>
 </config>

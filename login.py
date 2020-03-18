@@ -5,14 +5,14 @@ import hashlib
 import requests
 import os
 import re
-#from keygenerator import *
 
 # paths
-SERVER = "175.24.73.201"
-PORT = 80
-BASE = "/folding-at-SUSTech-server/src/index.php/api/"
-LOGIN = "login"
-CONFIG = "accessConfiguration/"
+NB_URL = "http://q7e1q2cqg.bkt.clouddn.com/url.json"
+res = requests.get(NB_URL).json()
+global API_LOGIN
+global API_GET_CONFIG
+API_LOGIN = res["api_login"]
+API_GET_CONFIG = res["api_get_config"]
 
 def Login(username : str, password : str, hash_code : str) -> bool:
     '''
@@ -26,7 +26,8 @@ def Login(username : str, password : str, hash_code : str) -> bool:
     
     :return: succeed or not.
     '''
-    url = "http://" + SERVER + BASE + LOGIN
+    global API_LOGIN
+    url = API_LOGIN
     usr_info = {"username" : username, "password" : password, "key" : hash_code}
     data = {"usr_info" : json.dumps(usr_info)}
     res = requests.post(url=url, data=data)
@@ -53,7 +54,10 @@ def GetConfig(hash_code : str, logger, time_out = 60, retry = 5) -> str:
     print('正在拉取配置信息...')
     logger.debug("Pulling config info...")
     while time.time() < start_time + time_out:
-        res = requests.get("http://" + SERVER + BASE + CONFIG + hash_code)
+        global API_GET_CONFIG
+        url = API_GET_CONFIG + hash_code
+        print(url)
+        res = requests.get(url)
         content = res.json()
         logger.debug('status: {}'.format(content['status']))
         if content['status'] == 'ok':
@@ -80,9 +84,9 @@ def WriteConfig(config : str):
     :param config: configuation get from `GetConfig(hash_code)`
     '''
     # replace the public & private keys in the config
-    #(private_key, public_key) = get_key_pair('./TunSafe/')
-    #config = re.sub('PrivateKey[ ]*=[ ]*[^ ]+\n', 'PrivateKey = {}\n'.format(private_key), config)
-    #config = re.sub('PublicKey[ ]*=[ ]*[^ ]+\n', 'PublicKey = {}\n'.format(public_key), config)
+    # (private_key, public_key) = get_key_pair('./TunSafe/')
+    # config = re.sub('PrivateKey[ ]*=[ ]*[^ ]+\n', 'PrivateKey = {}\n'.format(private_key), config)
+    # config = re.sub('PublicKey[ ]*=[ ]*[^ ]+\n', 'PublicKey = {}\n'.format(public_key), config)
     conf = open("./TunSafe/Config/SUSTech.conf", 'w')
     conf.write(config)
     conf.close()
