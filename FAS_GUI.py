@@ -38,6 +38,7 @@ def login_clicked():
     login_screen = Toplevel(main_screen)
     login_screen.title("登录")
     login_screen.geometry("300x250")
+    login_screen.resizable(0, 0) #Don't allow resizing in the x or y direction
     login_screen.iconbitmap("icon.ico")
     Label(login_screen, text="SUSTech CAS身份认证").pack()
     Label(login_screen, text="").pack()
@@ -134,6 +135,7 @@ def main_account_screen():
     global main_screen
     main_screen = Tk()
     main_screen.geometry("300x150")
+    main_screen.resizable(0, 0) #Don't allow resizing in the x or y direction
     main_screen.title("Folding@SUSTech")
     main_screen.iconbitmap("icon.ico")
     Label(text="Folding@SUSTech", bg="blue", fg="white", width="300", height="2", font=("Calibri Bold", 13)).pack()
@@ -155,6 +157,7 @@ def fas_screen():
     global fas_screen
     fas_screen = Tk()
     fas_screen.geometry("600x300")
+    fas_screen.resizable(0, 0) #Don't allow resizing in the x or y direction
     fas_screen.title("Folding@SUSTech")
     fas_screen.iconbitmap("icon.ico")
     Label(text="Folding@SUSTech", bg="blue", fg="white", width="300", height="2", font=("Calibri Bold", 13)).pack()
