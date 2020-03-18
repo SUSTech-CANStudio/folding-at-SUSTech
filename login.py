@@ -5,9 +5,10 @@ import hashlib
 import requests
 import os
 import re
+from keygenerator import *
 
 # paths
-NB_URL = "http://q7e1q2cqg.bkt.clouddn.com/url.json"
+NB_URL = "https://folding-api.citric-acid.zzwcdn.com/url.json"
 res = requests.get(NB_URL).json()
 global API_LOGIN
 global API_GET_CONFIG
