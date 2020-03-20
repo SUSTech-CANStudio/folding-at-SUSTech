@@ -1,6 +1,8 @@
 from tkinter import *
 import os
+import sys
 import subprocess
+import threading
 from login import *
 import logging
 
@@ -10,6 +12,8 @@ GUI_log_here = False
 global login_method
 
 global username
+
+global thread_should_end
 
 class TextHandler(logging.Handler):
     def __init__(self, txtOutput, level=logging.DEBUG, formatter=None):
@@ -188,13 +192,17 @@ def fas_screen():
     paused = False
     b_logger.info("Starting FAHClient with config.xml...")
     global login_method
+    global start_config
     if login_method == 'sid':
         global username
-        fah_client_ref = launchWithoutConsole("FAHClient --config ./config.xml --user {}".format(username))
+        start_config = "FAHClient --config ./config.xml --user {}".format(username)
     elif login_method == 'anonymous':
-        fah_client_ref = launchWithoutConsole("FAHClient --config ./config.xml")
+        start_config = "FAHClient --config ./config.xml"
     else:
         b_logger.error("Fail to select any login method.")
+        sys.exit(-1)
+    launchPIPEproc(start_config)
+    
     global fas_screen
     fas_screen = Tk()
     fas_screen.geometry("600x300")
@@ -263,11 +271,35 @@ def launchWithoutConsole(command):
     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     return subprocess.Popen(command, startupinfo=startupinfo)
 
+def launchPIPEproc(command):
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    global fah_client_ref
+    fah_client_ref = subprocess.Popen(command, stdout=subprocess.PIPE)
+    global thread_should_end
+    thread_should_end = False
+    send_thread(fah_client_ref, command).start()
+
+class send_thread(threading.Thread):
+    def __init__(self, fah_client_ref, command):
+        threading.Thread.__init__(self)
+        self.fah_client_ref = fah_client_ref
+        self.command = command
+    
+    def run(self):
+        for stdout_line in iter(self.fah_client_ref.stdout.readline, ""):
+            b_logger.debug(stdout_line.decode())
+            global thread_should_end
+            if thread_should_end:
+                break
+        fah_client_ref.stdout.close()
+
 if __name__ == "__main__":
     main_account_screen()
     if login_ok:
         fas_screen()
         GUI_log_here = False
         print("退出")
+        thread_should_end = True
         b_logger.info("Finish")
         fah_client_ref.terminate()
