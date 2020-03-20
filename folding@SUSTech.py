@@ -7,6 +7,10 @@ import logging
 global GUI_log_here
 GUI_log_here = False
 
+global login_method
+
+global username
+
 class TextHandler(logging.Handler):
     def __init__(self, txtOutput, level=logging.DEBUG, formatter=None):
         logging.Handler.__init__(self, level)
@@ -37,9 +41,10 @@ def login_clicked():
     global login_screen
     login_screen = Toplevel(main_screen)
     login_screen.title("登录")
-    login_screen.geometry("300x250")
+    login_screen.geometry("300x270")
     login_screen.resizable(0, 0) #Don't allow resizing in the x or y direction
     login_screen.iconbitmap("icon.ico")
+    Label(login_screen, text="").pack()
     Label(login_screen, text="SUSTech CAS身份认证").pack()
     Label(login_screen, text="").pack()
 
@@ -82,6 +87,7 @@ def login_verify(event=None):
         login_failure()
         b_logger.warning("login failure.")
     else:
+        global config
         config = GetConfig(username, password, b_logger)
         if not config:
             config_failure()
@@ -90,12 +96,44 @@ def login_verify(event=None):
             global login_ok
             login_ok = True
             b_logger.debug("Login successful, exiting window...")
-            delete_main_screen()
-            print("正在写入配置文件...")
-            b_logger.info("Writing config file")
-            WriteConfig(config)
-            print("配置文件写入成功，开始运行")
-            b_logger.info("Config file written, starting execution...")
+            # ask for user name permission
+            ask_for_permission()
+
+# ask whether the user agrees to use sid as his/her user name
+def ask_for_permission():
+    global permission_screen
+    permission_screen = Toplevel(login_screen)
+    permission_screen.title("登录方式")
+    permission_screen.geometry("300x210")
+    permission_screen.resizable(0, 0) #Don't allow resizing in the x or y direction
+    permission_screen.iconbitmap("icon.ico")
+    Label(permission_screen, text="Folding@SUSTech", bg="blue", fg="white", width="300", height="2", font=("Calibri Bold", 13)).pack()
+    Label(permission_screen, text="").pack()
+    Button(permission_screen, text="匿名登录", height="2", width="30", command=anonymous_login).pack()
+    Label(permission_screen, text="").pack()
+    Button(permission_screen, text="使用学号登录", height="2", width="30", command=sid_login).pack()
+    b_logger.info("Asking for login approach...")
+
+def anonymous_login():
+    global login_method
+    login_method = "anonymous"
+    b_logger.debug("'Anonymous Login' selected")
+    continue2LoginSuccess()
+
+def sid_login():
+    global login_method
+    login_method = "sid"
+    b_logger.debug("'SID Login' selected")
+    continue2LoginSuccess()
+
+def continue2LoginSuccess():
+    delete_main_screen()
+    print("正在写入配置文件...")
+    b_logger.info("Writing config file")
+    global config
+    WriteConfig(config)
+    print("配置文件写入成功，开始运行")
+    b_logger.info("Config file written, starting execution...")
 
 # Designing popup for login invalid password
 def login_failure():
@@ -149,8 +187,14 @@ def fas_screen():
     global fah_client_ref
     paused = False
     b_logger.info("Starting FAHClient with config.xml...")
-    #fah_client_ref = subprocess.Popen("FAHClient --config ./config.xml")
-    fah_client_ref = launchWithoutConsole("FAHClient --config ./config.xml")
+    global login_method
+    if login_method == 'sid':
+        global username
+        fah_client_ref = launchWithoutConsole("FAHClient --config ./config.xml --user {}".format(username))
+    elif login_method == 'anonymous':
+        fah_client_ref = launchWithoutConsole("FAHClient --config ./config.xml")
+    else:
+        b_logger.error("Fail to select any login method.")
     global fas_screen
     fas_screen = Tk()
     fas_screen.geometry("600x300")
