@@ -77,16 +77,12 @@ def login_verify(event=None):
     b_logger.debug("username: {}".format(username))
     b_logger.info("Verifying username and password...")
 
-    # Generate hash code
-    hash_code = GetHashCode(username)
-    b_logger.debug("generated hashcode = {}".format(hash_code))
-
     # Try login
-    if not Login(username, password, hash_code):
+    if not Login(username, password):
         login_failure()
         b_logger.warning("login failure.")
     else:
-        config = GetConfig(hash_code, b_logger)
+        config = GetConfig(username, password, b_logger)
         if not config:
             config_failure()
             b_logger.warning("pulling config failure.")
