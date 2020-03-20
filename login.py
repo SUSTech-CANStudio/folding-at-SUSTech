@@ -7,14 +7,16 @@ import os
 import re
 
 # paths
-NB_URL = "https://folding-api.citric-acid.zzwcdn.com/url.json"
+NB_URL = "http://q7e1q2cqg.bkt.clouddn.com/url.json"
 res = requests.get(NB_URL).json()
 global API_LOGIN
 global API_GET_CONFIG
 API_LOGIN = res["api_login"]
 API_GET_CONFIG = res["api_get_config"]
+# API_LOGIN = "https://folding-api.citric-acid.zzwcdn.com/api/login"
+# API_GET_CONFIG = "https://folding-api.citric-acid.zzwcdn.com/api/accessConfiguration"
 
-def Login(username : str, password : str, hash_code : str) -> bool:
+def Login(username : str, password : str) -> bool:
     '''
     Login the SUSTech CAS.
     
@@ -28,20 +30,18 @@ def Login(username : str, password : str, hash_code : str) -> bool:
     '''
     global API_LOGIN
     url = API_LOGIN
-    usr_info = {"username" : username, "password" : password, "key" : hash_code}
+    usr_info = {"username" : username, "password" : password}
     data = {"usr_info" : json.dumps(usr_info)}
     res = requests.post(url=url, data=data)
-    if not res.text:
+    if res.json()['status'] == 'ok':
         return True
     else:
-        # print(res.text)
         return False
     
-def GetConfig(hash_code : str, logger, time_out = 60, retry = 5) -> str:
+def GetConfig(username, password, logger, time_out = 60, retry = 5) -> str:
     '''
     Get configution by hash code.
-    
-    :param hash_code: the same hash code as login.
+
     
     :param time_out: time limit (seconds) for this action.
     
@@ -55,27 +55,20 @@ def GetConfig(hash_code : str, logger, time_out = 60, retry = 5) -> str:
     logger.debug("Pulling config info...")
     while time.time() < start_time + time_out:
         global API_GET_CONFIG
-        url = API_GET_CONFIG + hash_code
+        url = API_GET_CONFIG
         print(url)
-        res = requests.get(url)
+        
+        usr_info = {"username" : username, "password" : password}
+        data = {"usr_info" : json.dumps(usr_info)}
+        res = requests.post(url=url, data=data)
         content = res.json()
+
         logger.debug('status: {}'.format(content['status']))
         if content['status'] == 'ok':
             return content['config']
         time.sleep(retry)
     
     return False
-    
-def GetHashCode(username : str) -> str:
-    '''
-    Generate a new hash code.
-    
-    :param username: CAS user name.
-    
-    :return: hash code.
-    '''
-    plain = '{}-{}'.format(username, time.time)
-    return hashlib.sha256(plain.encode()).hexdigest()
     
 def WriteConfig(config : str):
     '''
@@ -90,4 +83,7 @@ def WriteConfig(config : str):
     conf = open("./TunSafe/Config/SUSTech.conf", 'w')
     conf.write(config)
     conf.close()
-    
+
+
+if __name__ == "__main__":
+    pass
