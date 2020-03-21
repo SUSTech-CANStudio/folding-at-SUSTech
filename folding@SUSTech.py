@@ -299,7 +299,8 @@ def launchPIPEproc(command):
     startupinfo = subprocess.STARTUPINFO()
     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     global fah_client_ref
-    fah_client_ref = subprocess.Popen(command, stdout=subprocess.PIPE)
+    fah_client_ref = subprocess.Popen(command, startupinfo=startupinfo, stdout=subprocess.PIPE)
+    #fah_client_ref = subprocess.Popen(command, startupinfo=startupinfo)
     global thread_should_end
     thread_should_end = False
     send_thread(fah_client_ref, command).start()
