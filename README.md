@@ -5,10 +5,18 @@
 
 
 
+
+
+
+
 ## Team SUSTech in Folding@home
 
--   Team-id: $236305$ (SUSTech).
+-   Team-id: **236305** (SUSTech).
 -   Using student id as identity brings bonus points
+
+
+
+
 
 
 
@@ -21,6 +29,10 @@
 
 
 
+
+
+
+
 ## Features of the Wrapper GUI
 
 -   Simple identification process for team SUSTech’s registration (with selectable “Anonymous” option), automatically register the user to team SUSTech
@@ -30,12 +42,20 @@
 
 
 
+
+
+
+
 ## Quickly Setup
 
 Find the installer [FASUSTech.exe](FASUSTech.exe). Refer to the following two documents. If you need an English copy, feel free <a href="mailto:11710403@mail.sustech.edu.cn">contact us</a>.
 
 -   [安装说明 (Setup Guidance)](安装说明.md)
 -   [使用说明 (How-to-Use Guidance)](使用说明.md)
+
+
+
+
 
 
 
@@ -49,6 +69,10 @@ python folding@SUSTech.py
 
 
 
+
+
+
+
 ## Build using `pyinstaller`
 
 For more details, refer to https://www.pyinstaller.org/
@@ -58,6 +82,10 @@ pyinstaller -F -i icon.ico folding@SUSTech.py
 ```
 
 then take the `.exe` file in `dist/` out to the root directory and execute.
+
+
+
+
 
 
 
