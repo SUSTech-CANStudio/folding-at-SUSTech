@@ -7,7 +7,7 @@ import os
 import re
 
 # paths
-NB_URL = "http://q7e1q2cqg.bkt.clouddn.com/url.json"
+NB_URL = "https://folding-config.citric-acid.zzwcdn.com/url.json"
 res = requests.get(NB_URL).json()
 global API_LOGIN
 global API_GET_CONFIG
