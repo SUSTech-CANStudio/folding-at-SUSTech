@@ -33,12 +33,17 @@ file_handler = logging.FileHandler(filename='FASLog.txt')
 file_handler.setLevel(logging.DEBUG)
 
 global formatter
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - "%(message)s" in - %(funcName)s - Line:%(lineno)s')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - "%(message)s" in - %(funcName)s - Line:%(lineno)s\n')
 file_handler.setFormatter(formatter)
 
 b_logger = logging.getLogger('test')
 b_logger.setLevel(logging.DEBUG)
 b_logger.addHandler(file_handler)
+
+c_logger = logging.getLogger('echo')
+c_logger.setLevel(logging.DEBUG)
+global echo_formatter
+echo_formatter = logging.Formatter('%(message)s')
 
 # window for login 
 def login_clicked():
@@ -64,14 +69,23 @@ def login_clicked():
     Label(login_screen, text="用户名 * ").pack()
     username_login_entry = Entry(login_screen, textvariable=username_verify)
     username_login_entry.pack()
-    username_login_entry.focus()
     Label(login_screen, text="").pack()
     Label(login_screen, text="密码 * ").pack()
     password_login_entry = Entry(login_screen, textvariable=password_verify, show= '*')
     password_login_entry.pack()
     Label(login_screen, text="").pack()
-    btn = Button(login_screen, text="登录", width=10, height=1, command=login_verify).pack()
+    btn = Button(login_screen, text="登录", width=10, height=1, command=login_verify, cursor="hand2").pack()
     login_screen.bind('<Return>', login_verify)
+
+    # fetch buffer usrn
+    f = open("./FASconfig.conf")
+    usrn_buf = f.read().strip()
+    f.close()
+    if usrn_buf == '':
+        username_login_entry.focus()
+    else:
+        username_login_entry.insert(0, usrn_buf)
+        password_login_entry.focus()
  
     b_logger.info("Initializing Login Window...")
 
@@ -82,6 +96,10 @@ def login_verify(event=None):
     global password
     username = username_verify.get()
     password = password_verify.get()
+    # buffer usrn
+    f = open("./FASconfig.conf", "w")
+    f.write(username)
+    f.close()
 
     b_logger.debug("username: {}".format(username))
     b_logger.info("Verifying username and password...")
@@ -113,9 +131,9 @@ def ask_for_permission():
     permission_screen.iconbitmap("icon.ico")
     Label(permission_screen, text="Folding@SUSTech", bg="blue", fg="white", width="300", height="2", font=("Calibri Bold", 13)).pack()
     Label(permission_screen, text="").pack()
-    Button(permission_screen, text="匿名登录", height="2", width="30", command=anonymous_login).pack()
+    Button(permission_screen, text="匿名登录", height="2", width="30", command=anonymous_login, cursor="hand2").pack()
     Label(permission_screen, text="").pack()
-    Button(permission_screen, text="使用学号登录", height="2", width="30", command=sid_login).pack()
+    Button(permission_screen, text="使用学号登录（推荐）", height="2", width="30", command=sid_login, cursor="hand2").pack()
     b_logger.info("Asking for login approach...")
 
 def anonymous_login():
@@ -179,7 +197,7 @@ def main_account_screen():
     main_screen.iconbitmap("icon.ico")
     Label(text="Folding@SUSTech", bg="blue", fg="white", width="300", height="2", font=("Calibri Bold", 13)).pack()
     Label(text="").pack()
-    Button(text="认证身份", height="2", width="30", command=login_clicked).pack()
+    Button(text="认证身份", height="2", width="30", command=login_clicked, cursor="hand2").pack()
     b_logger.info("Initializing Main Window...")
     main_screen.mainloop()
 
@@ -201,11 +219,12 @@ def fas_screen():
     else:
         b_logger.error("Fail to select any login method.")
         sys.exit(-1)
+    #fah_client_ref = launchWithoutConsole(start_config)
     launchPIPEproc(start_config)
     
     global fas_screen
     fas_screen = Tk()
-    fas_screen.geometry("600x300")
+    fas_screen.geometry("700x400")
     fas_screen.resizable(0, 0) #Don't allow resizing in the x or y direction
     fas_screen.title("Folding@SUSTech")
     fas_screen.iconbitmap("icon.ico")
@@ -213,13 +232,14 @@ def fas_screen():
     Label(text="").pack()
     global btn_txt
     btn_txt = StringVar()
-    btn = Button(textvariable=btn_txt, height="2", width="30", command=toggleFolding).pack()
+    btn = Button(textvariable=btn_txt, height="2", width="30", command=toggleFolding, cursor="hand2",
+                 bg="white", fg="black", activeforeground="white", activebackground="black").pack()
     b_logger.info("Initializing FAHCLient with a pre-unpause signal...")
     
     Label(text="").pack()
 
-    txtFrame = Frame(fas_screen, borderwidth=1, relief="sunken")
-    txtOutput = Text(txtFrame, wrap=NONE, height=10, width=70, borderwidth=0, bg="black", fg="white", state=DISABLED)
+    txtFrame = Frame(fas_screen, borderwidth=1, relief=SUNKEN)
+    txtOutput = Text(txtFrame, wrap=WORD, height=18, width=90, borderwidth=0, bg="black", fg="white", state=DISABLED)
     vscroll = Scrollbar(txtFrame, orient=VERTICAL, command=txtOutput.yview)
     txtOutput['yscroll'] = vscroll.set
     vscroll.pack(side="right", fill="y")
@@ -230,6 +250,10 @@ def fas_screen():
     th = TextHandler(txtOutput)
     th.setFormatter(formatter)
     b_logger.addHandler(th)
+    global echo_formatter
+    th_echo = TextHandler(txtOutput)
+    th_echo.setFormatter(echo_formatter)
+    c_logger.addHandler(th_echo)
 
     global GUI_log_here
     GUI_log_here = True
@@ -238,7 +262,7 @@ def fas_screen():
 
 def insertLog(txtOutput, str):
     txtOutput.config(state=NORMAL)
-    txtOutput.insert(END, str + "\n")
+    txtOutput.insert(END, str)
     txtOutput.config(state=DISABLED)
     txtOutput.yview_moveto(1)
     
@@ -288,7 +312,7 @@ class send_thread(threading.Thread):
     
     def run(self):
         for stdout_line in iter(self.fah_client_ref.stdout.readline, ""):
-            b_logger.debug(stdout_line.decode())
+            c_logger.debug(stdout_line.decode())
             global thread_should_end
             if thread_should_end:
                 break

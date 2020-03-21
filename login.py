@@ -33,7 +33,11 @@ def Login(username : str, password : str) -> bool:
     usr_info = {"username" : username, "password" : password}
     data = {"usr_info" : json.dumps(usr_info)}
     res = requests.post(url=url, data=data)
-    if res.json()['status'] == 'ok':
+    try:
+        status = res.json()['status']
+    except Exception:
+        return False
+    if status == 'ok':
         return True
     else:
         return False
