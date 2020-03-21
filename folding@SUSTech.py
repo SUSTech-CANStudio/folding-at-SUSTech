@@ -5,6 +5,7 @@ import subprocess
 import threading
 from login import *
 import logging
+from multiprocessing import Queue
 
 global GUI_log_here
 GUI_log_here = False
